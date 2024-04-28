@@ -9,11 +9,32 @@ import "./ShowsIndex.css";
 export default function ShowsIndex() {
   const [loadingError, setLoadingError] = useState(false);
   const [shows, setShows] = useState([]);
+  const [allShows, setAllShows] = useState([]);
+  const [searchTitle, setSearchTitle] = useState("");
+
+//Make a function that will grab out input value
+function handleTextChange(event) {
+  const title = event.target.value;
+  setSearchTitle(title);
+//Add our filtered function as a ternary
+  const result = title.length ? filterShows(title, allShows) : allShows;
+  setShows(result);
+}
+
+//console.log(searchTitle);
+
+function filterShows(search, shows) {
+  return shows.filter((show) => {
+    return show.title.toLowerCase().match(search.toLowerCase());
+  });
+}
+
 
   useEffect(() => {
     getAllShows()
       .then((response) => {
         setShows(response);
+        setAllShows(response);
         setLoadingError(false);
       })
       .catch((error) => {
@@ -22,7 +43,7 @@ export default function ShowsIndex() {
       });
   }, []);
 
-  console.log(shows);
+ // console.log(shows);
 
   return (
     <div>
@@ -39,9 +60,9 @@ export default function ShowsIndex() {
             Search Shows:
             <input
               type="text"
-              // value={searchTitle}
+                value={searchTitle}
               id="searchTitle"
-              // onChange={handleTextChange}
+                onChange={handleTextChange}
             />
           </label>
           <section className="shows-index">
