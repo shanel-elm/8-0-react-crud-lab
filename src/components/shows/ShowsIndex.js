@@ -1,12 +1,29 @@
+
 import { Link } from "react-router-dom";
-import { useState } from "react";
-
+import { getAllShows } from "../../api/fetch";
+import { useEffect, useState } from "react";
 import ErrorMessage from "../errors/ErrorMessage";
-
+import ShowListing from "./ShowListing";
 import "./ShowsIndex.css";
 
 export default function ShowsIndex() {
-  const [loadingError, setLoadingError] = useState(false) ;
+  const [loadingError, setLoadingError] = useState(false);
+  const [shows, setShows] = useState([]);
+
+  useEffect(() => {
+    getAllShows()
+      .then((response) => {
+        setShows(response);
+        setLoadingError(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoadingError(true);
+      });
+  }, []);
+
+  console.log(shows);
+
   return (
     <div>
       {loadingError ? (
@@ -29,6 +46,9 @@ export default function ShowsIndex() {
           </label>
           <section className="shows-index">
             {/* <!-- ShowListing components --> */}
+            {shows.map((show) => {
+              return <ShowListing show={show} key={show.id} />;
+            })}
           </section>
         </section>
       )}
